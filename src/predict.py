@@ -5,24 +5,23 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
+
+
+
 app=FastAPI(title="Manufacturing Defect Prediction API", description="API for predicting manufacturing defects and quality issues", version="1.0")
+models_loaded = False
+def load_models():
+    global anomaly_model, defect_probability, defect_type_model, quality_prediction, threshold,models_loaded
+    if models_loaded:
+        return
+    anomaly_model = joblib.load('models/anomaly_model.pkl')
+    defect_probability = joblib.load('models/defect_probability_model.pkl')
+    defect_type_model = joblib.load('models/defect_type_model.pkl')
+    quality_prediction = joblib.load('models/quality_prediction_model3.pkl')
+    threshold = joblib.load('models/threshold.pkl')
+    models_loaded = True
 
-anomaly_model = joblib.load('models/anomaly_model.pkl')
-defect_probability = joblib.load('models/defect_probability_model.pkl')
-defect_type_model = joblib.load('models/defect_type_model.pkl')
-quality_prediction = joblib.load('models/quality_prediction_model3.pkl')
-threshold = joblib.load('models/threshold.pkl')
 scaler=MinMaxScaler()
-
-
-
-
-print ("Models loaded successfully")
-print("Anomaly Detection Model:", anomaly_model.feature_names_in_)
-print("Defect Probability Model:", defect_probability.feature_names_in_)
-print("Defect Type Model:", defect_type_model.feature_names_in_)
-print("Quality Prediction Model:", quality_prediction.feature_names_in_)
-print("Threshold:", threshold)
 
 DEFCT_WEIGHTS={
     "Deformation":0.9,
@@ -41,18 +40,22 @@ def home():
 
 @app.post("/predict")
 def predict(data: ProductionSystem):
+
+    load_models()
     input_dict=data.model_dump()
     df=pd.DataFrame([input_dict])
+
     anomaly_flag=anomaly_model.predict(df)
     defect_proba=defect_probability.predict_proba(df)[:,1]
     defect_type_pred=defect_type_model.predict(df)
     quality=quality_prediction.predict(df)
+
     quality_risk=1-(quality/100)
     anomaly_binary=np.where(anomaly_flag==-1,1,0)
     defect_score=np.array([DEFCT_WEIGHTS[d] for d in defect_type_pred])
     criteria=np.column_stack([anomaly_binary,defect_proba,defect_score,quality_risk])
     weights=np.array([0.35,0.3,0.20,0.15])
-    final_score=np.dot(criteria,weights)
+    final_score=np.dot(criteria,weights)[0]
 
     def product_decision(row):
         quality=row['quality']
