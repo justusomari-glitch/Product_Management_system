@@ -29,5 +29,5 @@ jobs:
         docker build -t product-api .
     - name: Test app import
       run: |
-        python -c "from src.prediction import app; print('App imported successfully')"
+        python -c "from src.predict import app; print('App imported successfully')"
     
