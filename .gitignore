@@ -7,3 +7,4 @@ __pycache__
 .idea
 *.csv
 .pytest_cache
+*.pem
