@@ -17,7 +17,7 @@ def load_models():
     anomaly_model = joblib.load('models/anomaly_model.pkl')
     defect_probability = joblib.load('models/defect_probability_model.pkl')
     defect_type_model = joblib.load('models/defect_type_model.pkl')
-    quality_prediction = joblib.load('models/quality_prediction_model3.pkl')
+    quality_prediction = joblib.load('models/quality_prediction_model1.pkl')
     threshold = joblib.load('models/threshold.pkl')
     models_loaded = True
 
