@@ -4,7 +4,7 @@ import joblib
 anomaly_model = joblib.load('models/anomaly_model.pkl')
 defect_probability = joblib.load('models/defect_probability_model.pkl')
 typte_model = joblib.load('models/defect_type_model.pkl')
-quality_model = joblib.load('models/quality_prediction_model3.pkl')
+quality_model = joblib.load('models/quality_prediction_model1.pkl')
 
 
 print ("Models loaded successfully")

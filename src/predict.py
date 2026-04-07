@@ -4,11 +4,12 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-
+from src.logger import log_prediction, setup_mlflow
 
 
 
 app=FastAPI(title="Manufacturing Defect Prediction API", description="API for predicting manufacturing defects and quality issues", version="1.0")
+setup_mlflow()
 models_loaded = False
 def load_models():
     global anomaly_model, defect_probability, defect_type_model, quality_prediction, threshold,models_loaded
@@ -35,8 +36,6 @@ DEFCT_WEIGHTS={
 @app.get("/")
 def home():
     return {"message": "Welcome to the Manufacturing Defect Prediction API. Use the /predict endpoint to get predictions."}
-
-
 
 @app.post("/predict")
 def predict(data: ProductionSystem):
@@ -101,6 +100,29 @@ def predict(data: ProductionSystem):
     machines['product_decision']=machines.apply(product_decision,axis=1)
     machines['machine_decision']=machines.apply(machine_decision,axis=1)    
     machines['final_decision']=machines.apply(final_decision,axis=1)
+    log_prediction(
+        product_type=input_dict['product_type'],
+        product_sensitivity=input_dict['product_sensitivity'],  
+        material_quality=input_dict['material_quality'],
+        operator_skill_level=input_dict['operator_skill_level'],
+        temperature=input_dict['temperature'],
+        vibration=input_dict['vibration'],
+        pressure=input_dict['pressure'],
+        machine_speed=input_dict['machine_speed'],
+        cooling_rate=input_dict['cooling_rate'],
+        cycle_time=input_dict['cycle_time'],
+        tool_wear=input_dict['tool_wear'],
+        stress_index=input_dict['stress_index'],
+        anomaly_binary=anomaly_binary[0],
+        defect_proba=defect_proba[0],
+        defect_type_pred=defect_type_pred[0],
+        quality=quality[0],
+        final_score=final_score,
+        product_decision=machines['product_decision'].iloc[0],
+        machine_decision=machines['machine_decision'].iloc[0],
+        final_decision=machines['final_decision'].iloc[0]
+    )
+
     return machines.to_dict(orient="records")
 
 
