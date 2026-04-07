@@ -34,5 +34,5 @@ jobs:
       if: success() && github.ref == 'refs/heads/main'
       run: |
         echo "Triggering Render deployment..."
-        curl -X POST   "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+        curl -X POST   "${{ secrets.RENDER_DEPLOY_HOOK }}"
     
