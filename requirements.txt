@@ -71,7 +71,7 @@ pluggy==1.6.0
 prettytable==3.17.0
 propcache==0.4.1
 protobuf==6.33.6
-pyarrow==14.0.2
+pyarrow>=15.0.0,<16.0.0
 pyasn1==0.6.3
 pyasn1_modules==0.4.2
 pycparser==3.0
