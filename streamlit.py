@@ -54,13 +54,11 @@ if run:
         response=requests.post(url,json=data)
         if response.status_code==200:
             result=response.json()
+            st.write(result)
+        
             if isinstance(result, list):
                 result=result[0]
-            def to_float(val):
-                try:
-                    return float(val)
-                except (ValueError, TypeError):
-                    return 0.0
+            
             prob=to_float(result.get("defect_proba"))
             quality=to_float(result.get("quality"))
             score=to_float(result.get("final_score"))
