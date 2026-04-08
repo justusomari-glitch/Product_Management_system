@@ -28,34 +28,34 @@ def run_mlflow_logging(
 ):
     print("Setting up MLflow and logging model evaluation metrics...")
     setup_mlflow()
-    with mlflow.start_run(run_name="main_run"):
-        print("Logging model evaluation metrics and parameters to MLflow...")
+    
+    print("Logging model evaluation metrics and parameters to MLflow...")
 
-        with mlflow.start_run(run_name="defect_type",nested=True):
-            mlflow.log_param("model_type","Classification")
-            mlflow.log_metric("f1_score",f1_score(test_y_type,type_preds,average='weighted'))
-            mlflow.log_metric("precision_score",precision_score(test_y_type,type_preds,average='weighted'))
-            mlflow.log_metric("recall_score",recall_score(test_y_type,type_preds,average='weighted'))
-            mlflow.sklearn.log_model(defect_type_model,name="defect_type")
-        with mlflow.start_run(run_name="defect_probability",nested=True):
-            mlflow.log_param("model_type","Classification")
-            mlflow.log_param("threshold",threshold)
-            mlflow.log_metric("f1_score",f1_score(test_y_defect,defect_preds))
-            mlflow.log_metric("precision_score",precision_score(test_y_defect,defect_preds))
-            mlflow.log_metric("recall_score",recall_score(test_y_defect,defect_preds))
-            mlflow.sklearn.log_model(defect_probability,name="defect_probability")
+    with mlflow.start_run(run_name="defect_type"):
+        mlflow.log_param("model_type","Classification")
+        mlflow.log_metric("f1_score",f1_score(test_y_type,type_preds,average='weighted'))
+        mlflow.log_metric("precision_score",precision_score(test_y_type,type_preds,average='weighted'))
+        mlflow.log_metric("recall_score",recall_score(test_y_type,type_preds,average='weighted'))
+        mlflow.sklearn.log_model(defect_type_model,artifact_path="defect_type")
+    with mlflow.start_run(run_name="defect_probability"):
+        mlflow.log_param("model_type","Classification")
+        mlflow.log_param("threshold",threshold)
+        mlflow.log_metric("f1_score",f1_score(test_y_defect,defect_preds))
+        mlflow.log_metric("precision_score",precision_score(test_y_defect,defect_preds))
+        mlflow.log_metric("recall_score",recall_score(test_y_defect,defect_preds))
+        mlflow.sklearn.log_model(defect_probability,artifact_path="defect_probability")
 
-        with mlflow.start_run(run_name="product_quality",nested=True):
-            mlflow.log_param("model_type","RandomForestRegression")
-            mlflow.log_metric("r2_score",r2_score(test_y_quality,quality_preds))
-            mlflow.log_metric("MAE",mean_absolute_error(test_y_quality,quality_preds))
-            mlflow.log_metric("MSE",mean_squared_error(test_y_quality,quality_preds))
-            mlflow.sklearn.log_model(quality_prediction,name="product_quality")
+    with mlflow.start_run(run_name="product_quality"):
+        mlflow.log_param("model_type","RandomForestRegression")
+        mlflow.log_metric("r2_score",r2_score(test_y_quality,quality_preds))
+        mlflow.log_metric("MAE",mean_absolute_error(test_y_quality,quality_preds))
+        mlflow.log_metric("MSE",mean_squared_error(test_y_quality,quality_preds))
+        mlflow.sklearn.log_model(quality_prediction,artifact_path="product_quality")
 if __name__ == "__main__":
     import pandas as pd
     import joblib
 
-    df=pd.read_csv(r"C:\Users\user\Desktop\Product_Management_system\cleaned_data.csv")
+    df=pd.read_csv(r"C:\Users\user\Desktop\Product_Management_system\tables\cleaned_data.csv")
 
     x=df[['temperature', 'vibration', 'pressure', 'tool_wear', 'machine_speed', 'cooling_rate', 'cycle_time', 'stress_index',
        'product_type', 'product_sensitivity', 'material_quality', 'operator_skill_level']]
