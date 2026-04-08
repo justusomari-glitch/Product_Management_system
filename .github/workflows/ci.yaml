@@ -30,5 +30,9 @@ jobs:
     - name: Test app import
       run: |
         python -c "from src.predict import app; print('App imported successfully')"
-    
+    - name: Trigger Render deployment
+      if: success() && github.ref == 'refs/heads/main'
+      run: |
+        echo "Triggering Render deployment..."
+        curl -X POST   "${{ secrets.RENDER_DEPLOY_HOOK }}"
     
