@@ -58,7 +58,11 @@ if run:
         
             if isinstance(result, list):
                 result=result[0]
-            
+            def to_float(val):
+                try:
+                    return float(val)
+                except (ValueError, TypeError):
+                    return 0.0
             prob=to_float(result.get("defect_proba"))
             quality=to_float(result.get("quality"))
             score=to_float(result.get("final_score"))
