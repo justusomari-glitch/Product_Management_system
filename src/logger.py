@@ -1,7 +1,21 @@
 import mlflow
 from datetime import datetime
+import os
+import dagshub
+from dotenv import load_dotenv
 
-TRACKING_URI = "sqlite:///mlflow.db"
+load_dotenv()
+
+os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
+os.environ["MLFLOW_TRACKING_USERNAME"] = "justusomari-glitch"
+
+dagshub.init(
+    repo_owner="justusomari-glitch",
+    repo_name="Product_Management_system",
+    mlflow=True
+)
+
+TRACKING_URI = "https://dagshub.com/justusomari-glitch/Product_Management_system.mlflow"
 EXPERIMENT_NAME = "Product Management System"
 
 def setup_mlflow():
