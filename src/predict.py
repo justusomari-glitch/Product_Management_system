@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from src.logger import log_prediction, setup_mlflow
+import dagshub
 
 
 
