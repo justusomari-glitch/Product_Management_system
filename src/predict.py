@@ -10,7 +10,9 @@ import dagshub
 
 
 app=FastAPI(title="Manufacturing Defect Prediction API", description="API for predicting manufacturing defects and quality issues", version="1.0")
-setup_mlflow()
+@app.on_event("startup")
+def startup_event():
+    setup_mlflow()
 models_loaded = False
 def load_models():
     global anomaly_model, defect_probability, defect_type_model, quality_prediction, threshold,models_loaded
