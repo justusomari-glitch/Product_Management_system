@@ -5,9 +5,19 @@ import dagshub
 from dotenv import load_dotenv
 
 load_dotenv()
+dagshub_token = os.getenv("DAGSHUB_TOKEN")
 
-os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("DAGSHUB_TOKEN")
-os.environ["MLFLOW_TRACKING_USERNAME"] = "justusomari-glitch"
+
+if dagshub_token:
+    os.environ["MLFLOW_TRACKING_USERNAME"] = "justusomari-glitch"
+    os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("dagshub_token")
+    import dagshub
+    dagshub.init(
+        repo_owner="justusomari-glitch",
+        repo_name="Product_Management_system",
+        mlflow=True
+    )
+
 
 dagshub.init(
     repo_owner="justusomari-glitch",
