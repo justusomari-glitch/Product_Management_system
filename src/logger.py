@@ -10,7 +10,7 @@ dagshub_token = os.getenv("DAGSHUB_TOKEN")
 
 if dagshub_token:
     os.environ["MLFLOW_TRACKING_USERNAME"] = "justusomari-glitch"
-    os.environ["MLFLOW_TRACKING_PASSWORD"] = os.getenv("dagshub_token")
+    os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
     import dagshub
     dagshub.init(
         repo_owner="justusomari-glitch",
