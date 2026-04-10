@@ -9,15 +9,18 @@ EXPERIMENT_NAME = "Product Management System"
 def setup_mlflow():
     load_dotenv()
     dagshub_token = os.getenv("DAGSHUB_TOKEN")
-    if dagshub_token:
-        os.environ["MLFLOW_TRACKING_USERNAME"] = "justusomari-glitch"
-        os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
-        import dagshub
-        dagshub.init(
-            repo_owner="justusomari-glitch",
-            repo_name="Product_Management_system",
-            mlflow=True
-        )
+    try:
+        if dagshub_token:
+            os.environ["MLFLOW_TRACKING_USERNAME"] = "justusomari-glitch"
+            os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+            import dagshub
+            dagshub.init(
+                repo_owner="justusomari-glitch",
+                repo_name="Product_Management_system",
+                mlflow=True
+            )
+    except Exception as e:
+        print(f"Mlflow setup warning: {e}")
     mlflow.set_tracking_uri(TRACKING_URI)
     mlflow.set_experiment(EXPERIMENT_NAME)
 
