@@ -19,11 +19,6 @@ if dagshub_token:
     )
 
 
-dagshub.init(
-    repo_owner="justusomari-glitch",
-    repo_name="Product_Management_system",
-    mlflow=True
-)
 
 TRACKING_URI = "https://dagshub.com/justusomari-glitch/Product_Management_system.mlflow"
 EXPERIMENT_NAME = "Product Management System"
