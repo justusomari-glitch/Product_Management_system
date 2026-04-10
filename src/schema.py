@@ -1,21 +1,6 @@
 from pydantic import BaseModel
 import joblib
 
-anomaly_model = joblib.load('models/anomaly_model.pkl')
-defect_probability = joblib.load('models/defect_probability_model.pkl')
-typte_model = joblib.load('models/defect_type_model.pkl')
-quality_model = joblib.load('models/quality_prediction_model1.pkl')
-
-
-print ("Models loaded successfully")
-print("Anomaly Detection Model:", anomaly_model.feature_names_in_)
-print("Defect Probability Model:", defect_probability.feature_names_in_)
-print("Defect Type Model:", typte_model.feature_names_in_)
-print("Quality Prediction Model:", quality_model.feature_names_in_)
-
-
-
-
 class AnomalyDetectionRequest(BaseModel):
     temperature: float
     vibration: float
