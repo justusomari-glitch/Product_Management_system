@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 dagshub_token = os.getenv("DAGSHUB_TOKEN")
 
-
+def setup_
 if dagshub_token:
     os.environ["MLFLOW_TRACKING_USERNAME"] = "justusomari-glitch"
     os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
@@ -19,11 +19,6 @@ if dagshub_token:
     )
 
 
-dagshub.init(
-    repo_owner="justusomari-glitch",
-    repo_name="Product_Management_system",
-    mlflow=True
-)
 
 TRACKING_URI = "https://dagshub.com/justusomari-glitch/Product_Management_system.mlflow"
 EXPERIMENT_NAME = "Product Management System"
