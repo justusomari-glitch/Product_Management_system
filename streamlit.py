@@ -18,7 +18,7 @@ st.caption("QUALITY CONTROL ML SYSTEM.")
 
 st.sidebar.header("Input Parameters")
 st.sidebar.subheader("Product Information")
-product_type = st.sidebar.selectbox("Product Type", ["Aluminium Plate", "Steel","Plastic"])
+product_type = st.sidebar.selectbox("Product Type", ["Aluminium Plate", "High Strength Steel","Plastic Component"])
 product_sensitivity = st.sidebar.selectbox("Product Sensitivity", ["High", "Medium", "Low"])
 material_quality = st.sidebar.selectbox("Material Quality", ["High", "Medium", "Low"])
 st.sidebar.subheader("Operator")
