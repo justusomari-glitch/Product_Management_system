@@ -129,7 +129,7 @@ elif mode=="Real-time Monitoring":
     placeholder=st.empty()
     while True:
         try:
-            df=pd.read_csv(r"C:\Users\user\Desktop\Product_Management_system\predictions.csv")
+            df=pd.read_csv("predictions.csv")
             df=df.apply(pd.to_numeric, errors='ignore')
             latest=df.iloc[-1]
             with placeholder.container():
