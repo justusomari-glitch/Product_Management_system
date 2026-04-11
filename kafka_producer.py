@@ -3,13 +3,22 @@ from confluent_kafka import Producer
 import json
 import random
 import time
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+bootstrap_servers = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
+username = os.getenv("KAFKA_API_KEY")
+password = os.getenv("KAFKA_API_SECRET")
 
 conf= {
-    'bootstrap.servers': 'pkc-921jm.us-east-2.aws.confluent.cloud:9092',
+    'bootstrap.servers': bootstrap_servers,
     'sasl.mechanisms': 'PLAIN',
     'security.protocol': 'SASL_SSL',
-    'sasl.username': 'WCI53EE263UVQOQT',
-    'sasl.password': 'cflt6qRZKAdsdXAfJ3mOQoK7MpuY1Zs2EHiYY+3EqYm0lz5YNVPQgcIZ82HCHNEQ'
+    'sasl.username': username,
+    'sasl.password': password
 }
 
 def delivery_report(err, msg):
