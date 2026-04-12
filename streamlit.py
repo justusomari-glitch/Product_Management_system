@@ -3,9 +3,11 @@ import requests
 import pandas as pd
 import numpy as np
 import time
+import os
+from dotenv import load_dotenv
 
 
-
+load_dotenv()
 st.set_page_config(
     page_title="Product Management System",
       page_icon=":factory:", 
@@ -121,81 +123,51 @@ if mode=="Manual input":
         
         except Exception as e:
             st.error(f"Error during prediction: {e}")
+        
 
 elif mode=="Real-time Monitoring":
     import time
+    import pymysql
+
     st.title("Real-time Monitoring")
     st.info("This mode will automatically fetch the latest predictions from the system every 10 seconds.")
     placeholder=st.empty()
     while True:
         try:
-            df=pd.read_csv("predictions.csv")
-            df=df.apply(pd.to_numeric, errors='ignore')
-            latest=df.iloc[-1]
-            with placeholder.container():
-                st.subheader("Latest Prediction")
-                st.dataframe(df.tail(1))
-                st.metric("Latest Anomaly:",latest.get("anomaly_binary"))
-                st.metric("Latest Defect Type:",latest.get("defect_type"))
-                col1, col2, col3 = st.columns(3)
-                col1.metric("Latest Defect Probability", f"{float(latest.get('defect_proba', 0.0)):.2f}")
-                col2.metric("Latest Product Quality", f"{float(latest.get('quality', 0.0)):.2f}")
-                col3.metric("Latest System Risk Score", f"{float(latest.get('final_score', 0.0)):.2f}")
-                st.divider()
-                st.subheader("Latest Decision Engine Output")
-                st.markdown(f"##### Latest Product Decision: {latest.get('product_decision')}")
-                st.markdown(f"##### Latest Machine Decision: {latest.get('machine_decision')}")
-                st.markdown(f"##### Latest Final Decision: {latest.get('final_decision')}")
-                param_data={
-                    "Parameter":[
-                        "operator_skill_level",
-                        "product_type",
-                        "product_sensitivity",
-                        "material_quality",
-                        "Temperature",
-                        "Vibration",
-                        "Pressure",
-                        "Machine Speed",
-                        "Cooling Rate",
-                        "Cycle Time",
-                        "Tool Wear",
-                        "Stress Index"
-                    ],
-                    "Value":[
-                        str(latest.get("operator_skill_level","N/A")),
-                        str(latest.get("product_type","N/A")),
-                        str(latest.get("product_sensitivity","N/A")),
-                        str(latest.get("material_quality","N/A")),
-                        str(latest.get("temperature", 0.0)),
-                        str(latest.get("vibration", 0.0)),
-                        str(latest.get("pressure", 0.0)),
-                        str(latest.get("machine_speed", 0.0)),
-                        str(latest.get("cooling_rate", 0.0)),
-                        str(latest.get("cycle_time", 0.0)),
-                        str(latest.get("tool_wear", 0.0)),
-                        str(latest.get("stress_index", 0.0))
-                    ]
-                }
-                df_params=pd.DataFrame(param_data)
-                numeric_params=df_params[df_params["Parameter"].isin([
-                    "Temperature",
-                    "Vibration",
-                    "Pressure",
-                    "Machine Speed",
-                    "Cooling Rate",
-                    "Cycle Time",
-                    "Tool Wear",
-                    "Stress Index"])]
-                numeric_params=numeric_params.copy()
-                numeric_params["Value"]=pd.to_numeric(numeric_params["Value"], errors='coerce').fillna(0)
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.bar_chart(
-                        numeric_params.set_index("Parameter")["Value"])
-                with col2:
-                    st.table(df_params.set_index("Parameter"))
+            connection=pymysql.connect(
+                    host=os.getenv("DB_HOST"),
+                    user=os.getenv("DB_USER"),
+                    password=os.getenv("DB_PASSWORD"),
+                    database=os.getenv("DB_NAME"),
+                    port=int(os.getenv("DB_PORT")),
+                    ssl={"ssl": {"mode": os.getenv("SSL_MODE")}}
+            )
+            cursor=connection.cursor()
+            cursor.execute("SELECT * FROM predictions ORDER BY id DESC LIMIT 100")
+            row=cursor.fetchall()
+            columns=[col[0] for col in cursor.description]
+            df=pd.DataFrame(row, columns=columns)
+            connection.close()
+            if not df.empty:
+                latest=df.iloc[0]
+                with placeholder.container():
+                    st.dataframe(df)
+                    st.subheader("Latest Prediction")
+                    st.dataframe(df.tail(1))
+                    st.metric("Latest Anomaly:",latest.get("anomaly_binary"))
+                    st.metric("Latest Defect Type:",latest.get("defect_type"))
+                    col1, col2, col3 = st.columns(3)
+                    col1.metric("Latest Defect Probability", f"{float(latest.get('defect_proba', 0.0)):.2f}")
+                    col2.metric("Latest Product Quality", f"{float(latest.get('quality', 0.0)):.2f}")
+                    col3.metric("Latest System Risk Score", f"{float(latest.get('final_score', 0.0)):.2f}")
+                    st.divider()
+                    st.subheader("Latest Decision Engine Output")
+                    st.markdown(f"##### Latest Product Decision: {latest.get('product_decision')}")
+                    st.markdown(f"##### Latest Machine Decision: {latest.get('machine_decision')}")
+                    st.markdown(f"##### Latest Final Decision: {latest.get('final_decision')}")
+               
         except Exception as e:
-            st.error(f"Error fetching real-time data: {e}")
+                st.error(f"Data base error: {e}")
         time.sleep(10)
 st.caption("Built by Justus Omari Kwache| Powered by FastAPI | Deployed on Render & Streamlit")
         
